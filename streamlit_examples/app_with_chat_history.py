@@ -9,6 +9,7 @@ import threading
 import time
 import sys
 from contanst import available_docs
+from chat_history import add_chat_history
 
 
 
@@ -42,7 +43,7 @@ if __name__ == "__main__":
     # Document loading and vector store creation
     doc_loading = DocumentReader()
     
-    vector_store = doc_loading.load_document(path= available_docs[1].file_path,embeddings=embed_llm)
+    vector_store = doc_loading.load_document(embeddings=embed_llm)
     blog(f"Vector store created {vector_store}")
     
     # Initializing retriever
@@ -51,9 +52,8 @@ if __name__ == "__main__":
     
     # Querying
     
-    
+    store = {}
     while keep_asking:
-        qa = QuestionAnswering(retriever= qa_retriever, llm= llm)
         choice = str(input("Want to ask a query? Enter Y for yes, N for no: \n")).strip().lower()
         
         if choice == 'y':
@@ -62,14 +62,20 @@ if __name__ == "__main__":
  
             start_time = time.time()
             print("Generating ...")
-            response = qa.answerQuery(query= query)
+            response = add_chat_history(llm= llm, retriever= qa_retriever, store= store, query=query)
+            blog(f"Context Used -----> {response['context']}")
+            blog(f"Answer -----> ${response['answer']}")
             end_time = time.time()
             print('\n')
-            blog(f"Response time: {end_time - start_time}")            
+            blog(f"Response time: {end_time - start_time}")
+            print('\n')            
         elif choice == 'n':
             keep_asking = False
+            blog("Following is the Chat History ---->")
+            print(store)
+            blog("Chat Ended")
         
-        print('\n')
+        
             
                 
         

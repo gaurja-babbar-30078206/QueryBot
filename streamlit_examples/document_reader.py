@@ -9,13 +9,24 @@ from langchain_community.document_loaders import UnstructuredFileLoader
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
+from contanst import available_docs
+from utils import blog
 
+def print_doc_list():
+    print("List of available documents:")
+    for count in range(len(available_docs)):
+        print(f"[{count}] {available_docs[count].file_name}")
    
 class DocumentReader:
-          
+    
     def __init__(self):
         # Initialising text splitter
-        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)          
+        self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+        print_doc_list()
+        chosen_doc = int(input("Enter index of chosen document: "))
+        self.path = available_docs[chosen_doc].file_path
+        blog(f"File chosen -----> {self.path}")
+                  
               
     # get the file extension
     def get_file_extension(self):
@@ -40,8 +51,7 @@ class DocumentReader:
         
             
     # creates vector embeddings and stores in vector store    
-    def load_document(self, path, embeddings):
-        self.path = path
+    def load_document(self,embeddings):
         docs = self.split_documents()
         return Chroma.from_documents(documents=docs, embedding = embeddings)            
         
