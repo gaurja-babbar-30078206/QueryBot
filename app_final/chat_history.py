@@ -64,13 +64,15 @@ def add_chat_history(llm, retriever, store, query):
         get_session_history,
         input_messages_key= "input",
         history_messages_key= "chat_history",
-        output_messages_key= "answer"
+        output_messages_key= "answer",
     )
     
     blog(f"Output Schema ----> {conversational_rag_chain.output_schema}")
-    
     
     return conversational_rag_chain.invoke(
     {"input": query},
     config= {"configurable": {"session_id": "abc123"}},
     )
+    
+
+    
