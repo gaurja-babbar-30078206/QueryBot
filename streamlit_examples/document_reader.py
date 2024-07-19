@@ -11,6 +11,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from contanst import available_docs
 from utils import blog
+from time import time
 
 def print_doc_list():
     print("List of available documents:")
@@ -53,6 +54,9 @@ class DocumentReader:
     # creates vector embeddings and stores in vector store    
     def load_document(self,embeddings):
         docs = self.split_documents()
-        return Chroma.from_documents(documents=docs, embedding = embeddings)            
+        start_time = time()
+        vector_store =  Chroma.from_documents(documents=docs, embedding = embeddings)
+        blog(f"Vector Store Creation time ----->{time() - start_time}")       
+        return vector_store     
         
          

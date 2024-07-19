@@ -38,6 +38,7 @@ if __name__ == "__main__":
     
     # Initialise Embeddings model
     embed_llm = get_embed_llm()
+    
     blog(f"Embedding Model: {embed_llm}")
     
     # Document loading and vector store creation
@@ -63,11 +64,7 @@ if __name__ == "__main__":
             start_time = time.time()
             print("Generating ...")
             response = add_chat_history(llm= llm, retriever= qa_retriever, store= store, query=query)
-            blog(f"Context Used -----> {response['context']}")
             blog(f"Answer -----> ${response['answer']}")
-            end_time = time.time()
-            print('\n')
-            blog(f"Response time: {end_time - start_time}")
             print('\n')            
         elif choice == 'n':
             keep_asking = False

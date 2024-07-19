@@ -6,7 +6,7 @@ from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from utils import blog
-        
+from time import time        
         
 def add_chat_history(llm, retriever, store, query):
     
@@ -19,7 +19,7 @@ def add_chat_history(llm, retriever, store, query):
         [
             ("system", contextualize_q_system_prompt),
             MessagesPlaceholder("chat_history"),
-            ("human", "{input}"),
+            ("human", "{input}."),
         ]
     )
 
@@ -42,7 +42,7 @@ def add_chat_history(llm, retriever, store, query):
         [
             ("system", qa_system_prompt),
             MessagesPlaceholder("chat_history"),
-            ("human", "{input}"),
+            ("human", "{input}.yy"),
         ]
     )
 
@@ -69,7 +69,11 @@ def add_chat_history(llm, retriever, store, query):
     
     blog(f"Output Schema ----> {conversational_rag_chain.output_schema}")
     
-    return conversational_rag_chain.invoke(
+    start_time = time()
+    response =  conversational_rag_chain.invoke(
     {"input": query},
     config= {"configurable": {"session_id": "abc123"}},
     )
+    
+    blog(f"Response Generation time -----> {time() - start_time}")
+    return response
