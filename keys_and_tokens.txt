@@ -1,2 +1,0 @@
-hf_token_1 = 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
-hf_token_2 = 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
