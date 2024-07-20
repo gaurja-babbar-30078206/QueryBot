@@ -9,7 +9,7 @@ import threading
 import time
 import sys
 from contanst import available_docs
-from chat_history import add_chat_history
+from app_final.exp_chat_history import add_chat_history
 
 
 

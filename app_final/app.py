@@ -48,6 +48,8 @@ from constant import llm_path_list, embed_llm_path_list
 from home_page_view_model import *
 from constant import blog
 from chat_history import add_chat_history
+from home_page_view_model import initialise_embed_llm 
+
 
 
 
@@ -56,12 +58,14 @@ st.title("Document Query Bot 📔+🤖")
 with st.sidebar:
     
     left_col,right_col = st.columns(2)
+    
+    
     llm = initialise_llm(left_col.selectbox(
+    
         "LLM",placeholder = "Choose an LLM",
         options= range(len(llm_path_list)), index= None,
         format_func= lambda x: llm_path_list[x].model_file,
         ))
-
 
     embed_llm = initialise_embed_llm(right_col.selectbox(
         "Embed LLM",placeholder = "Choose an Embed LLM",
@@ -84,9 +88,7 @@ with st.sidebar:
 if "store" not in st.session_state:
     st.session_state.store = {}
     
-# if st.button("Generate"):
-#     add_chat_history(llm,st.session_state.retriever,st.session_state.store,"Give me summary in 5 points" )    
-
+    
 # initialise chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -96,6 +98,7 @@ if "messages" not in st.session_state:
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])    
+
 
 # react to user input
 if prompt:= st.chat_input("Enter your questions..."):
@@ -109,9 +112,10 @@ if prompt:= st.chat_input("Enter your questions..."):
 
     # Display assistant response in chat message container
     with st.chat_message("ai"):
-        response = add_chat_history(llm,st.session_state.retriever,st.session_state.store, prompt )
-        st.markdown(response["answer"])
-        
-    # add ai response to chat history
+        chat_box = st.empty()
+        stream_handler = StreamHandler(chat_box,display_method='write')
+        config ={"callbacks": [stream_handler, StreamingStdOutCallbackHandler()]}
+        response = add_chat_history(llm=llm,retriever=st.session_state.retriever,query=prompt, config=config )
+
     st.session_state.messages.append({"role":"ai", "content": response})            
     

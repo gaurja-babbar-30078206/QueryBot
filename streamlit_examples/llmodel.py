@@ -1,4 +1,4 @@
-from langchain_community.llms import CTransformers
+from langchain_community.llms.ctransformers import CTransformers
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from contanst import llm_path_list, embed_llm_path_list, LLModelSpecs
 from langchain_huggingface import HuggingFaceEmbeddings

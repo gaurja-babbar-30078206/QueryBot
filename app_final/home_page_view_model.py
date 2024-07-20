@@ -10,13 +10,14 @@ from document_reader import DocumentReader
 from langchain_huggingface import HuggingFaceEmbeddings
 import random
 import time
+from stream_handler_model import StreamHandler
 
 @st.cache_resource
 def initialise_llm(index: int):
     if index is not None:
         print(f"Initialising LLM ... {index}")
         dir = r"D:\OneDrive - Adani\Desktop\LEARNING_FOLDER\_Kolkata_2024\1_LLM\local_downloaded_models"
-        return CTransformers( model= dir, model_file = llm_path_list[index].model_file, callbacks=[StreamingStdOutCallbackHandler()], config = {"context_length": 16000, "max_new_tokens": 3000})
+        return CTransformers( model= dir, model_file = llm_path_list[index].model_file, config = {"context_length": 16000, "max_new_tokens": 3000})
 
 @st.cache_resource
 def initialise_embed_llm(index: int):
