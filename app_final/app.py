@@ -41,15 +41,19 @@ between script reruns
 
 
 ## The Answer was there all along ....
+
+// TODO
+[0] Add a timer to record the response time
+
 """
 
 import streamlit as st
 from constant import llm_path_list, embed_llm_path_list
 from home_page_view_model import *
 from constant import blog
-from chat_history import add_chat_history
+from chat_history import add_chat_history, get_response
 from home_page_view_model import initialise_embed_llm 
-
+from time import time
 
 
 
@@ -61,7 +65,6 @@ with st.sidebar:
     
     
     llm = initialise_llm(left_col.selectbox(
-    
         "LLM",placeholder = "Choose an LLM",
         options= range(len(llm_path_list)), index= None,
         format_func= lambda x: llm_path_list[x].model_file,
@@ -75,7 +78,7 @@ with st.sidebar:
     
     if "retriever" not in st.session_state:
         st.session_state.retriever = None
-        
+            
     with st.form("my_form"):
         blog("build")
         uploaded_file= st.file_uploader("Choose a Document")
@@ -83,6 +86,9 @@ with st.sidebar:
         if submitted:
             vector_store = create_vector_store(uploaded_file= uploaded_file, embed_llm=embed_llm)
             st.session_state.retriever = vector_store.as_retriever()
+        else:
+            st.empty()
+            
             
 
 if "store" not in st.session_state:
@@ -115,7 +121,6 @@ if prompt:= st.chat_input("Enter your questions..."):
         chat_box = st.empty()
         stream_handler = StreamHandler(chat_box,display_method='write')
         config ={"callbacks": [stream_handler, StreamingStdOutCallbackHandler()]}
-        response = add_chat_history(llm=llm,retriever=st.session_state.retriever,query=prompt, config=config )
-
+        response = get_response(llm=llm,retriever=st.session_state.retriever,query=prompt, config= config )
     st.session_state.messages.append({"role":"ai", "content": response})            
     

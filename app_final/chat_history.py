@@ -6,9 +6,13 @@ from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from constant import blog
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
+
         
-        
-def add_chat_history(llm, retriever, store, query):
+## DND        
+def add_chat_history(llm, retriever, store ,query, config):
     
     contextualize_q_system_prompt = """Given a chat history and the latest user question \
     which might reference context in the chat history, formulate a standalone question \
@@ -56,7 +60,7 @@ def add_chat_history(llm, retriever, store, query):
         if session_id not in store:
             store[session_id] = ChatMessageHistory()
         return store[session_id]
-
+     
 
 
     conversational_rag_chain = RunnableWithMessageHistory(
@@ -67,12 +71,35 @@ def add_chat_history(llm, retriever, store, query):
         output_messages_key= "answer",
     )
     
-    blog(f"Output Schema ----> {conversational_rag_chain.output_schema}")
-    
+
     return conversational_rag_chain.invoke(
     {"input": query},
-    config= {"configurable": {"session_id": "abc123"}},
+    config = config,
     )
-    
 
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
+
+def get_response(llm, retriever, query, config):
+    qa_system_prompt = """
+    You must answer the user's questions. \
+    Use the following pieces of retrieved context to answer the question :{context} \
+    If you don't know the answer, just say that you don't know. \
+    Do not make up fake information. \
+    Keep the answer concise.\
+
+    Answer: """
+
+    qa_prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", qa_system_prompt),
+            ("human", "{input}"),
+        ]
+    )
+            
+    rag_chain = (
+    {"context": retriever | format_docs, "input": RunnablePassthrough()}
+    | qa_prompt
+    | llm)
     
+    return rag_chain.invoke(query, config) 
