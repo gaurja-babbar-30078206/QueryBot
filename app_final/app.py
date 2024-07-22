@@ -121,6 +121,8 @@ if prompt:= st.chat_input("Enter your questions..."):
         chat_box = st.empty()
         stream_handler = StreamHandler(chat_box,display_method='write')
         config ={"callbacks": [stream_handler, StreamingStdOutCallbackHandler()]}
+        start_time = time()
         response = get_response(llm=llm,retriever=st.session_state.retriever,query=prompt, config= config )
+        st.write(f"Total Response time ---> {time() - start_time}")
     st.session_state.messages.append({"role":"ai", "content": response})            
     
