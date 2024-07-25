@@ -29,8 +29,7 @@ def initialise_embed_llm(index: int):
             model_kwargs = {"trust_remote_code": True})
 
 
-## Hashing the unhashable parameters
-        
+## Hashing the unhashable parameters        
 def hash_func(obj: HuggingFaceEmbeddings):
     return obj.model_name
 
@@ -50,16 +49,3 @@ def create_vector_store(embed_llm,uploaded_file ):
         blog(f"Vectore Store created ---> {vectore_store}") 
         return vectore_store
     
-
-def response_generator():
-        response =random.choice(
-            [
-            "Hello there! How can I assist you today?",
-            "Hi, human! Is there anything I can help you with?",
-            "Do you need help?", 
-            ]
-        )
-        
-        for word in response.split():
-            yield word + " "
-            time.sleep(0.05) 

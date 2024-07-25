@@ -102,4 +102,8 @@ def get_response(llm, retriever, query, config):
     | qa_prompt
     | llm)
     
+    ## //TODO Get Intermediate outputs, like what are the documents being returned by the chain ?
+        
+    blog(f"Rag chain -->{rag_chain}")
+    
     return rag_chain.invoke(query, config) 

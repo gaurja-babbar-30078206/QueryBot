@@ -54,8 +54,26 @@ from constant import blog
 from chat_history import add_chat_history, get_response
 from home_page_view_model import initialise_embed_llm 
 from time import time
+from langchain_openai import AzureChatOpenAI
 
+@st.cache_resource
+def get_gpt_llm(): 
+    
+    OPENAI_API_BASE="https://ailabazopenaise.openai.azure.com"
+    GPT_DEPLOYMENT_NAME="ailabgpt35turbo"
+    OPENAI_API_KEY="07a2db3305d14f619202c549ca81b0d2"
 
+    model = AzureChatOpenAI(
+    azure_endpoint=OPENAI_API_BASE,
+    openai_api_version="2023-09-15-preview",
+    deployment_name =GPT_DEPLOYMENT_NAME,
+    openai_api_key=OPENAI_API_KEY,
+    openai_api_type="azure",
+    temperature = 0
+    )    
+    
+    blog(f"Created Model ----> {model}")
+    return model
 
 
 st.title("Document Query Bot 📔+🤖")
@@ -70,6 +88,8 @@ with st.sidebar:
         format_func= lambda x: llm_path_list[x].model_file,
         ))
 
+    # llm = get_gpt_llm()
+    
     embed_llm = initialise_embed_llm(right_col.selectbox(
         "Embed LLM",placeholder = "Choose an Embed LLM",
         options= range(len(embed_llm_path_list)), index= None,
@@ -121,6 +141,10 @@ if prompt:= st.chat_input("Enter your questions..."):
         chat_box = st.empty()
         stream_handler = StreamHandler(chat_box,display_method='write')
         config ={"callbacks": [stream_handler, StreamingStdOutCallbackHandler()]}
+        start_time = time()
+        response = llm.invoke(prompt)
         response = get_response(llm=llm,retriever=st.session_state.retriever,query=prompt, config= config )
+        blog(f"Time taken for response ---> {time()- start_time}")
+        blog(f"Response ---> {response}")
     st.session_state.messages.append({"role":"ai", "content": response})            
     
