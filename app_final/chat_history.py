@@ -9,7 +9,7 @@ from constant import blog
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
-
+import time
         
 ## DND        
 def add_chat_history(llm, retriever, store ,query, config):
@@ -96,14 +96,18 @@ def get_response(llm, retriever, query, config):
             ("human", "{input}"),
         ]
     )
-            
+    
+    start = time.time()
+    retrieved_docs = retriever.invoke(query)
+    blog(f"Retrieve Documents ---- Time: {time.time() - start} ----> {retrieved_docs} ")
+    
+    start = time.time()        
     rag_chain = (
     {"context": retriever | format_docs, "input": RunnablePassthrough()}
     | qa_prompt
     | llm)
     
     ## //TODO Get Intermediate outputs, like what are the documents being returned by the chain ?
-        
-    blog(f"Rag chain -->{rag_chain}")
+    # blog(f"Response time ---->{time.time() - start}")
     
     return rag_chain.invoke(query, config) 

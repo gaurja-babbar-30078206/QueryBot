@@ -64,7 +64,7 @@ embed_llm_path_list = [
         file_name= "gte-base-en-v1.5"),
     LLModelSpecs(
         dir= r"D:\OneDrive - Adani\Desktop\LEARNING_FOLDER\_Kolkata_2024\1_LLM\local_downloaded_models\embedding_models\bge-base-en-v1.5",
-        file_name= "embedding_models\\bge-base-en-v1.5"
+        file_name= "bge-base-en-v1.5"
         ),
     LLModelSpecs(
         dir= r"D:\OneDrive - Adani\Desktop\LEARNING_FOLDER\_Kolkata_2024\1_LLM\local_downloaded_models\embedding_models\snowflake-arctic-embed-m",

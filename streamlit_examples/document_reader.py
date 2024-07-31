@@ -4,9 +4,7 @@ import pathlib # creates single var
 
 
 # text and pdf covered, also covers Images(jpg, png), have to see how??
-from langchain_community.document_loaders import UnstructuredFileLoader 
-# pdf
-
+from langchain_community.document_loaders import UnstructuredFileLoader, UnstructuredWordDocumentLoader 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from contanst import available_docs
@@ -41,6 +39,8 @@ class DocumentReader:
                 loader = UnstructuredFileLoader(self.path)               
             case '.txt':
                 loader = UnstructuredFileLoader(self.path)
+            case '.docx':
+                loader = UnstructuredWordDocumentLoader(self.path)
             case _:
                 print('Format of the document is not supported')    
         return loader.load()
