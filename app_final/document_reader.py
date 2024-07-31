@@ -42,5 +42,11 @@ class DocumentReader:
         self.path = path
         docs = self.split_documents()
         return Chroma.from_documents(documents=docs, embedding = embeddings)            
+    
+    # creates vector embeddings and stores in vector store    
+    def load_document_from_disk(self,embeddings, path):
+        self.path = path
+        docs = self.split_documents()
+        return Chroma.from_documents(documents=docs, embedding = embeddings)            
         
          
